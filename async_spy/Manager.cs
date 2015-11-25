@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace async_spy
@@ -13,28 +11,27 @@ namespace async_spy
             var timer = Stopwatch.StartNew();
             ///////
 
-            URLGenerator.generate();
-            //Fetcher.fetch();
-            /*
-            var tasks = new Task[Config.max_thread_num];
-            for (int taskNumber = 0; taskNumber < Config.max_thread_num; taskNumber++)
+            // Generate URLs
+            Task.Run(() => 
             {
-                tasks[taskNumber] = Task.Factory.StartNew(
-                    () =>
-                    {
-                        Fetcher.fetch();
-                    });
-            }
+                URLGenerator.generate();
+            });
 
-            Task.WaitAll(tasks);
-            */
+            // Fetch files
+            Task.Run(() => 
+            {
+                Parallel.For(0, Config.max_thread_num, index => 
+                {
+                    Fetcher.fetch();
+                });
+            });
 
-            Task.Run(() => { Parallel.For(0, Config.max_thread_num, index => { Fetcher.fetch(); }); });
+            // Convert files
             Parallel.For(0, Config.max_thread_num, index => { Converter.convert(); });
 
             ///////
             timer.Stop();
-            Console.WriteLine(timer.ElapsedMilliseconds / 1000.0);
+            Console.WriteLine(timer.ElapsedMilliseconds / (60 * 1000.0));
         }
     }
 
