@@ -35,7 +35,7 @@ namespace async_spy
                     }
                 }
                 String currXLS = current.toXLS();
-                if (URLGenerator.directories[current.dirNum - 1].downloadFlag)
+                if (URLGenerator.directories[current.dirNum - 1].getDownload())
                 {        
                     Console.WriteLine("Downloading " + Config.url_base + currXLS + " to " + Config.local_xls_base + currXLS);
                     try

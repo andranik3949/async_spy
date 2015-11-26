@@ -15,14 +15,10 @@ namespace async_spy
         {
             m_isDone = false;
             m_maxGlobalSuffix = Int32.Parse(fetchMaxSuffix(Config.url_base).TrimEnd('/'));
-            directories = new List<DirInfo>();
-    
-            DirInfo temp;
-            temp.downloadFlag = true;
-            temp.progress = 0;
-            temp.maxLocalSuffix = -1;
-            for( int i = 0; i < m_maxGlobalSuffix; i++ )
+            directories = new List<DirInfo>( m_maxGlobalSuffix );
+            for ( int i = 0; i < m_maxGlobalSuffix; i++ )
             {
+                DirInfo temp = new DirInfo();
                 directories.Add( temp );
             }
         }
@@ -45,9 +41,13 @@ namespace async_spy
                 for( int j = 1; j <= maxLocalSuffix; j++ )
                 {
                     url.fileNum = j;
-                    lock ( Shared.s_url_queue )
+                    if (URLGenerator.directories[i - 1].getDownload())
                     {
-                        Shared.s_url_queue.Enqueue(url);
+                        Console.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+                        lock (Shared.s_url_queue)
+                        {
+                            Shared.s_url_queue.Enqueue(url);
+                        }
                     }
                 }
             }

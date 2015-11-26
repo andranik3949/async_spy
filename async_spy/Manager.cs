@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace async_spy
@@ -27,7 +28,15 @@ namespace async_spy
             });
 
             // Convert files
-            Parallel.For(0, Config.max_thread_num, index => { Converter.convert(); });
+            Task latest = Task.Run(() =>
+            {
+                Parallel.For(0, Config.max_thread_num, index =>
+                {
+                    Converter.convert();
+                });
+            });
+
+            Task.WaitAll(latest);
 
             ///////
             timer.Stop();

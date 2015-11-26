@@ -28,20 +28,47 @@ namespace async_spy
         }
     }
 
-    public struct DirInfo
+    public class DirInfo
     {
-        public bool downloadFlag;
-        public int maxLocalSuffix;
-        public int progress;
+        public DirInfo()
+        {
+            m_downloadFlag = true;
+            m_maxLocalSuffix = -1;
+            m_progress = 0;
+        }
 
         public void setMaxLocalSuffix(int max)
         {
-            maxLocalSuffix = max;
+            m_maxLocalSuffix = max;
+        }
+
+        public int getMaxLocalSuffix()
+        {
+            return m_maxLocalSuffix;
+        }
+
+        public bool getDownload()
+        {
+            return m_downloadFlag;
+        }
+
+        public void setDownload()
+        {
+            m_downloadFlag = true;
+        }
+
+        public void unsetDownload()
+        {
+            m_downloadFlag = false;
         }
 
         public void advance()
         {
-            progress++;
+            m_progress++;
         }
+
+        public bool m_downloadFlag;
+        public int m_maxLocalSuffix;
+        public int m_progress;
     }
 }
