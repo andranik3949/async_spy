@@ -13,30 +13,24 @@ namespace async_spy
             ///////
 
             // Generate URLs
-            Task.Run(() => 
+            Task generation = Task.Run(() => 
             {
                 URLGenerator.generate();
             });
 
             // Fetch files
-            Task.Run(() => 
+            Task fetching = Task.Run(() => 
             {
-                Parallel.For(0, Config.max_thread_num, index => 
-                {
-                    Fetcher.fetch();
-                });
+                Fetcher.fetch();
             });
 
             // Convert files
-            Task latest = Task.Run(() =>
+            Task conversion = Task.Run(() =>
             {
-                Parallel.For(0, Config.max_thread_num, index =>
-                {
-                    Converter.convert();
-                });
+                Converter.convert();
             });
 
-            Task.WaitAll(latest);
+            Task.WaitAll( conversion );
 
             ///////
             timer.Stop();

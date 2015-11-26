@@ -1,10 +1,16 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace async_spy
 {
     public static class Converter
     {
+        static Converter()
+        {
+            m_threadFree = new Semaphore(Config.max_thread_num, Config.max_thread_num);
+        }
+
         public static void convert()
         {
             while (true)
@@ -26,26 +32,17 @@ namespace async_spy
                         break;
                     }
                 }
-                String currXLS = current.toXLS();
                 if (URLGenerator.directories[current.dirNum - 1].getDownload())
                 {
-                    Console.WriteLine("Converting " + Config.local_xls_base + currXLS + " to " + Config.local_xlsx_base + current.toXLSX());
-                    try
-                    {
-                        Thread.Sleep(100);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("Failed to convert " + Config.local_xls_base + currXLS);
-                        Console.WriteLine(ex.Message);
-                        continue;
-                        //throw ex;
-                    }
-                    Console.WriteLine("Converted " + currXLS);
+                    m_threadFree.WaitOne();
+                    Task.Run(() =>
+                   {
+                       convert_file(current);
+                   }).ContinueWith((lastTask) => { m_threadFree.Release(); });
                 }
                 else
                 {
-                    Console.WriteLine("Skipping " + Config.local_xls_base + currXLS);
+                    Console.WriteLine("Skipping " + Config.local_xls_base + current.toXLS());
                 }
 
                 /*Console.WriteLine("Converting " + Config.local_xls_base + filename);
@@ -67,5 +64,24 @@ namespace async_spy
                 Console.WriteLine(Config.local_xls_base + filename + " saved as " + Config.local_xlsx_base + filename);*/
             }
         }
+
+        private static void convert_file( Filename current )
+        {
+            String currXLS = current.toXLS();
+            Console.WriteLine("Converting " + Config.local_xls_base + currXLS + " to " + Config.local_xlsx_base + current.toXLSX());
+            try
+            {
+                Thread.Sleep(100);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Failed to convert " + Config.local_xls_base + currXLS);
+                Console.WriteLine(ex.Message);
+                //throw ex;
+            }
+            Console.WriteLine("Converted " + currXLS);
+        }
+
+        private static Semaphore m_threadFree;
     }
 }

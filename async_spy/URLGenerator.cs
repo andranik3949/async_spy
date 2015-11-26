@@ -43,7 +43,6 @@ namespace async_spy
                     url.fileNum = j;
                     if (URLGenerator.directories[i - 1].getDownload())
                     {
-                        Console.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
                         lock (Shared.s_url_queue)
                         {
                             Shared.s_url_queue.Enqueue(url);
