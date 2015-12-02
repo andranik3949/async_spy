@@ -41,7 +41,7 @@ namespace async_spy
                     Task.Run(() =>
                     {
                         fetchFile(current);
-                    }).ContinueWith((prevTask) => { m_threadFree.Release(); });
+                    }).ContinueWith((prevTask) => { Console.WriteLine( m_threadFree.Release(1) ); });
                 }
                 else
                 {
@@ -55,15 +55,17 @@ namespace async_spy
         {
             WebClient client = new WebClient();
             String currXLS = current.toXLS();
-           
-            Console.WriteLine("Downloading " + Config.url_base + currXLS + " to " + Config.local_xls_base + currXLS);
+            String currRemoteXLS = current.toRemoteXLS();
+
+            Console.WriteLine("Downloading " + Config.url_base + currRemoteXLS + " to " + Config.local_xls_base + currXLS);
             try
             {
-                client.DownloadFile(Config.url_base + currXLS, Config.local_xls_base + currXLS);
+               client.DownloadFile(Config.url_base + currRemoteXLS, Config.local_xls_base + currXLS);
+               //Thread.Sleep(1000);
             }
             catch (WebException ex)
             {
-                Console.WriteLine("Failed to download " + Config.url_base + currXLS);
+                Console.WriteLine("Failed to download " + Config.url_base + currRemoteXLS);
                 Console.WriteLine(ex.Message);
                 //throw ex;
             }

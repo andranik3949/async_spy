@@ -17,7 +17,7 @@ namespace async_spy
             {
                 URLGenerator.generate();
             });
-
+            
             // Fetch files
             Task fetching = Task.Run(() => 
             {
@@ -29,20 +29,19 @@ namespace async_spy
             {
                 Converter.convert();
             });
-
+            
             Task.WaitAll( conversion );
-
             ///////
             timer.Stop();
-            Console.WriteLine(timer.ElapsedMilliseconds / (60 * 1000.0));
+            Console.WriteLine(timer.Elapsed.Minutes.ToString() + "m" + timer.Elapsed.Seconds.ToString() + "s");
         }
     }
 
     public static class Config
     {
-        public static int max_thread_num = Environment.ProcessorCount;
+        public static int max_thread_num = Environment.ProcessorCount * 2;
+        public static string local_xls_base = Environment.CurrentDirectory + "\\" + "XLS\\";
+        public static string local_xlsx_base = Environment.CurrentDirectory + "\\" + "XLSX\\";
         public const string url_base = "http://www.police.am/Hanraqve/";
-        public const string local_xls_base = "XLS/";
-        public const string local_xlsx_base = "XLSX/";
     }
 }

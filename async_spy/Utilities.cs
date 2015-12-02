@@ -12,6 +12,11 @@ namespace async_spy
             return toPath() + ".xls";
         }
 
+        public String toRemoteXLS()
+        {
+            return toXLS().Replace('\\', '/');
+        }
+
         public String toXLSX()
         {
             return toPath() + ".xlsx";
@@ -24,7 +29,7 @@ namespace async_spy
             {
                 temp = temp.PadLeft(2, '0');
             }
-            return dirNum.ToString() + "/" + dirNum.ToString() + "_" + temp;
+            return dirNum.ToString() + "\\" + dirNum.ToString() + "_" + temp;
         }
     }
 
@@ -67,8 +72,8 @@ namespace async_spy
             m_progress++;
         }
 
-        public bool m_downloadFlag;
-        public int m_maxLocalSuffix;
-        public int m_progress;
+        private bool m_downloadFlag;
+        private int m_maxLocalSuffix;
+        private int m_progress;
     }
 }

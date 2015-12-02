@@ -29,9 +29,9 @@ namespace async_spy
             Filename url;
             for( int i = 1; i <= m_maxGlobalSuffix; i++ )
             {
-                if( !Directory.Exists( Config.local_xls_base + i.ToString() + "/") )
+                if( !Directory.Exists( Config.local_xls_base + i.ToString() + "\\") )
                 {
-                    Directory.CreateDirectory(Config.local_xls_base + i.ToString() + "/");
+                    Directory.CreateDirectory(Config.local_xls_base + i.ToString() + "\\");
                 }
 
                 url.dirNum = i;

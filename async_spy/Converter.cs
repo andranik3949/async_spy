@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -40,7 +42,7 @@ namespace async_spy
                     m_threadFree.WaitOne();
                     taskList.Add ( Task.Run(() =>
                     {
-                        convert_file(current);
+                        convertFile(current);
                     }).ContinueWith((lastTask) => { m_threadFree.Release(); }) );
                 }
                 else
@@ -50,14 +52,26 @@ namespace async_spy
             }
         }
 
-        private static void convert_file( Filename current )
+        private static void convertFile( Filename current )
         {
             String currXLS = current.toXLS();
-            Console.WriteLine("Converting " + Config.local_xls_base + currXLS + " to " + Config.local_xlsx_base + current.toXLSX());
+            String currXLSX = current.toXLSX();
+            Console.WriteLine("Converting " + Config.local_xls_base + currXLS + " to " + Config.local_xlsx_base + currXLSX);
             try
             {
-                Thread.Sleep(333);
-            }
+               //Thread.Sleep(333);
+               if( !Directory.Exists(Config.local_xlsx_base + current.dirNum.ToString()) )
+               {
+                  Directory.CreateDirectory(Config.local_xlsx_base + current.dirNum.ToString());
+               }
+
+               Process conversion = new Process();
+               conversion.StartInfo.FileName = @"C:\Program Files (x86)\Microsoft Office\Office12\excelcnv.exe";
+               conversion.StartInfo.Arguments = string.Format(@" -nme -oice {0} {1}", Config.local_xls_base + currXLS, Config.local_xlsx_base + currXLSX);
+               conversion.Start();
+
+               conversion.WaitForExit(1000 * 60);
+         }
             catch (Exception ex)
             {
                 Console.WriteLine("Failed to convert " + Config.local_xls_base + currXLS);
@@ -69,12 +83,7 @@ namespace async_spy
             /*Console.WriteLine("Converting " + Config.local_xls_base + filename);
             try
             {
-                Process conversion = new Process();
-                conversion.StartInfo.FileName = @"C:\Program Files (x86)\Microsoft Office\Office12\excelcnv.exe";
-                conversion.StartInfo.Arguments = string.Format(@" -nme -oice {0} {1}", Config.local_xls_base + filename, Config.local_xlsx_base + filename);
-                conversion.Start();
 
-                conversion.WaitForExit(1000 * 60);
             }
             catch (Exception ex)
             {
