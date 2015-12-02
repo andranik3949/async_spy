@@ -35,7 +35,7 @@ namespace async_spy
                         break;
                     }
                 }
-                if (URLGenerator.directories[current.dirNum - 1].getDownload())
+                if (URLGenerator.directories[current.getDirNum()].getDownload())
                 {
                     m_threadFree.WaitOne();
                     Task.Run(() =>
@@ -47,7 +47,7 @@ namespace async_spy
                 {
                     Console.WriteLine("Skipping " + Config.url_base + current.toXLS() );
                 }
-                URLGenerator.directories[current.dirNum - 1].advance();
+                URLGenerator.directories[current.getDirNum()].advance();
             }
         }
 

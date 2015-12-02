@@ -2,78 +2,74 @@
 
 namespace async_spy
 {
-    public struct Filename
-    {
-        public int dirNum;
-        public int fileNum;
+   public class Filename
+   {  
+      public Filename( int dirNum, String fileName )
+      {
+         m_dirNum = dirNum;
+         m_fileName = fileName;
+      }
 
-        public String toXLS()
-        {
-            return toPath() + ".xls";
-        }
+      public int getDirNum()
+      {
+         return m_dirNum;
+      }
 
-        public String toRemoteXLS()
-        {
-            return toXLS().Replace('\\', '/');
-        }
+      public String toXLS()
+      {
+         return m_dirNum.ToString() + "\\" + m_fileName;
+      }
+      
+      public String toRemoteXLS()
+      {
+         return toXLS().Replace('\\', '/');
+      }
+      
+      public String toXLSX()
+      {
+         return toXLS() + "x";
+      }
 
-        public String toXLSX()
-        {
-            return toPath() + ".xlsx";
-        }
+      private int m_dirNum;
+      private string m_fileName;
+   }
 
-        private String toPath()
-        {
-            String temp = fileNum.ToString();
-            if( dirNum != 39 )   // Because fuck logic, that's why
-            {
-                temp = temp.PadLeft(2, '0');
-            }
-            return dirNum.ToString() + "\\" + dirNum.ToString() + "_" + temp;
-        }
-    }
-
-    public class DirInfo
-    {
-        public DirInfo()
-        {
-            m_downloadFlag = true;
-            m_maxLocalSuffix = -1;
-            m_progress = 0;
-        }
-
-        public void setMaxLocalSuffix(int max)
-        {
-            m_maxLocalSuffix = max;
-        }
-
-        public int getMaxLocalSuffix()
-        {
-            return m_maxLocalSuffix;
-        }
-
-        public bool getDownload()
-        {
-            return m_downloadFlag;
-        }
-
-        public void setDownload()
-        {
-            m_downloadFlag = true;
-        }
-
-        public void unsetDownload()
-        {
-            m_downloadFlag = false;
-        }
-
-        public void advance()
-        {
-            m_progress++;
-        }
-
-        private bool m_downloadFlag;
-        private int m_maxLocalSuffix;
-        private int m_progress;
-    }
+   public class DirInfo
+   {
+      public DirInfo( int maxLocalSuffix )
+      {
+          m_downloadFlag = true;
+          m_maxLocalSuffix = maxLocalSuffix;
+          m_progress = 0;
+      }
+      
+      public int getMaxLocalSuffix()
+      {
+         return m_maxLocalSuffix;
+      }
+      
+      public bool getDownload()
+      {
+         return m_downloadFlag;
+      }
+      
+      public void setDownload()
+      {
+         m_downloadFlag = true;
+      }
+      
+      public void unsetDownload()
+      {
+         m_downloadFlag = false;
+      }
+      
+      public void advance()
+      {
+         m_progress++;
+      }
+      
+      private bool m_downloadFlag;
+      private int m_maxLocalSuffix;
+      private int m_progress;
+   }
 }

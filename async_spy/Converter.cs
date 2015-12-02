@@ -37,7 +37,7 @@ namespace async_spy
                         break;
                     }
                 }
-                if (URLGenerator.directories[current.dirNum - 1].getDownload())
+                if (URLGenerator.directories[current.getDirNum()].getDownload())
                 {
                     m_threadFree.WaitOne();
                     taskList.Add ( Task.Run(() =>
@@ -60,9 +60,9 @@ namespace async_spy
             try
             {
                //Thread.Sleep(333);
-               if( !Directory.Exists(Config.local_xlsx_base + current.dirNum.ToString()) )
+               if( !Directory.Exists(Config.local_xlsx_base + current.getDirNum().ToString()) )
                {
-                  Directory.CreateDirectory(Config.local_xlsx_base + current.dirNum.ToString());
+                  Directory.CreateDirectory(Config.local_xlsx_base + current.getDirNum().ToString());
                }
 
                Process conversion = new Process();
