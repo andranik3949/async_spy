@@ -17,7 +17,7 @@ namespace async_spy
             {
                 URLGenerator.generate();
             });
-            
+            /*
             // Fetch files
             Task fetching = Task.Run(() => 
             {
@@ -29,8 +29,8 @@ namespace async_spy
             {
                 Converter.convert();
             });
-            
-            Task.WaitAll( conversion );
+            */
+            Task.WaitAll( generation );
             ///////
             timer.Stop();
             Console.WriteLine(timer.Elapsed.Minutes.ToString() + "m" + timer.Elapsed.Seconds.ToString() + "s");
