@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace async_spy
 {
-    static class Manager
+   static class Manager
     {
         public static void Main()
         {
@@ -17,20 +16,20 @@ namespace async_spy
             {
                 URLGenerator.generate();
             });
-            /*
+            
             // Fetch files
             Task fetching = Task.Run(() => 
             {
                 Fetcher.fetch();
             });
-
+         
             // Convert files
             Task conversion = Task.Run(() =>
             {
                 Converter.convert();
             });
-            */
-            Task.WaitAll( generation );
+            
+            Task.WaitAll( conversion );
             ///////
             timer.Stop();
             Console.WriteLine(timer.Elapsed.Minutes.ToString() + "m" + timer.Elapsed.Seconds.ToString() + "s");

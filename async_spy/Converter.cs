@@ -11,7 +11,7 @@ namespace async_spy
     {
         static Converter()
         {
-            m_threadFree = new Semaphore(Config.max_thread_num, Config.max_thread_num);
+            m_threadFree = new Semaphore(Config.max_thread_num / 2, Config.max_thread_num / 2);
         }
 
         public static void convert()
@@ -37,7 +37,7 @@ namespace async_spy
                         break;
                     }
                 }
-                if (URLGenerator.directories[current.getDirNum()].getDownload())
+                if (URLGenerator.directories[current.getDirNum() - 1].getDownload())
                 {
                     m_threadFree.WaitOne();
                     taskList.Add ( Task.Run(() =>
@@ -70,8 +70,15 @@ namespace async_spy
                conversion.StartInfo.Arguments = string.Format(@" -nme -oice {0} {1}", Config.local_xls_base + currXLS, Config.local_xlsx_base + currXLSX);
                conversion.Start();
 
-               conversion.WaitForExit(1000 * 60);
-         }
+               if( !conversion.WaitForExit(1000 * 10) )
+               {
+                  conversion.Kill();
+                  lock( Shared.s_url_queue )
+                  {
+                     Shared.s_url_queue.Enqueue(current);
+                  }
+               }
+            }
             catch (Exception ex)
             {
                 Console.WriteLine("Failed to convert " + Config.local_xls_base + currXLS);
@@ -79,19 +86,6 @@ namespace async_spy
                 //throw ex;
             }
             Console.WriteLine("Converted " + currXLS);
-
-            /*Console.WriteLine("Converting " + Config.local_xls_base + filename);
-            try
-            {
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Failed to convert " + filename);
-                Console.WriteLine(ex.Message);
-                throw ex;
-            };
-            Console.WriteLine(Config.local_xls_base + filename + " saved as " + Config.local_xlsx_base + filename);*/
          }
 
          private static Semaphore m_threadFree;

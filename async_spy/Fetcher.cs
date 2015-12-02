@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -35,46 +36,37 @@ namespace async_spy
                         break;
                     }
                 }
-                if (URLGenerator.directories[current.getDirNum()].getDownload())
+                if (URLGenerator.directories[current.getDirNum() - 1].getDownload())
                 {
+                    String currXLS = current.toXLS();
+                    String currRemoteXLS = current.toRemoteXLS();
+
+                    WebClient client = new WebClient();
+
                     m_threadFree.WaitOne();
-                    Task.Run(() =>
+                    Console.WriteLine("Downloading " + Config.url_base + currRemoteXLS + " to " + Config.local_xls_base + currXLS);
+                    client.DownloadFileTaskAsync(Config.url_base + currRemoteXLS, Config.local_xls_base + currXLS).ContinueWith( (prevTask) => 
                     {
-                        fetchFile(current);
-                    }).ContinueWith((prevTask) => { Console.WriteLine( m_threadFree.Release(1) ); });
+                        m_threadFree.Release(1);
+                        if (prevTask.Exception != null)
+                        {
+                           Console.WriteLine("Failed to download " + Config.url_base + currRemoteXLS);
+                           Console.WriteLine(prevTask.Exception.Message);
+                           //throw e.Error;
+                        }
+                        lock (Shared.s_xls_queue)
+                        {
+                           Shared.s_xls_queue.Enqueue(current);
+                        }
+                        Console.WriteLine("Downloaded " + currXLS);
+                    });
                 }
                 else
                 {
-                    Console.WriteLine("Skipping " + Config.url_base + current.toXLS() );
+                    Console.WriteLine("Skipping " + Config.url_base + current.toRemoteXLS() );
                 }
-                URLGenerator.directories[current.getDirNum()].advance();
+                URLGenerator.directories[current.getDirNum() - 1].advance();
             }
-        }
-
-        private static void fetchFile( Filename current )
-        {
-            WebClient client = new WebClient();
-            String currXLS = current.toXLS();
-            String currRemoteXLS = current.toRemoteXLS();
-
-            Console.WriteLine("Downloading " + Config.url_base + currRemoteXLS + " to " + Config.local_xls_base + currXLS);
-            try
-            {
-               client.DownloadFile(Config.url_base + currRemoteXLS, Config.local_xls_base + currXLS);
-               //Thread.Sleep(1000);
-            }
-            catch (WebException ex)
-            {
-                Console.WriteLine("Failed to download " + Config.url_base + currRemoteXLS);
-                Console.WriteLine(ex.Message);
-                //throw ex;
-            }
-
-            lock (Shared.s_xls_queue)
-            {
-                Shared.s_xls_queue.Enqueue(current);
-            }
-            Console.WriteLine("Downloaded " + currXLS);
         }
 
         public static bool isDone()
