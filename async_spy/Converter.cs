@@ -88,6 +88,6 @@ namespace async_spy
             Console.WriteLine("Converted " + currXLS);
          }
 
-         private static Semaphore m_threadFree;
+         private static SemaphoreSlim m_threadFree;
     }
 }
