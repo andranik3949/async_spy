@@ -74,7 +74,7 @@ namespace async_spy
             return m_isDone;
         }
 
-        private static Semaphore m_threadFree;
+        private static SemaphoreSlim m_threadFree;
         private static bool m_isDone;
     }
 }
