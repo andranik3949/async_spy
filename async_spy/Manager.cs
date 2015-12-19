@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace async_spy
 {
-   static class Manager
+    static class Manager
     {
         public static void Main()
         {

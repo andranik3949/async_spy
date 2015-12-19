@@ -11,7 +11,7 @@ namespace async_spy
     {
         static Converter()
         {
-            m_threadFree = new Semaphore(Config.max_thread_num / 2, Config.max_thread_num / 2);
+            m_threadFree = new SemaphoreSlim(Config.max_thread_num / 2, Config.max_thread_num / 2);
         }
 
         public static void convert()
@@ -39,11 +39,11 @@ namespace async_spy
                 }
                 if (URLGenerator.directories[current.getDirNum() - 1].getDownload())
                 {
-                    m_threadFree.WaitOne();
+                    m_threadFree.Wait();
                     taskList.Add ( Task.Run(() =>
                     {
                         convertFile(current);
-                    }).ContinueWith((lastTask) => { m_threadFree.Release(); }) );
+                    }).ContinueWith((lastTask) => { m_threadFree.Release(1); }) );
                 }
                 else
                 {
@@ -67,7 +67,7 @@ namespace async_spy
 
                Process conversion = new Process();
                conversion.StartInfo.FileName = @"C:\Program Files (x86)\Microsoft Office\Office12\excelcnv.exe";
-               conversion.StartInfo.Arguments = string.Format(@" -nme -oice {0} {1}", Config.local_xls_base + currXLS, Config.local_xlsx_base + currXLSX);
+               conversion.StartInfo.Arguments = string.Format(@"-nme -oice ""{0}"" ""{1}""", Config.local_xls_base + currXLS, Config.local_xlsx_base + currXLSX);
                conversion.Start();
 
                if( !conversion.WaitForExit(1000 * 10) )

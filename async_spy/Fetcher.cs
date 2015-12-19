@@ -11,7 +11,7 @@ namespace async_spy
         static Fetcher()
         {
             m_isDone = false;
-            m_threadFree = new Semaphore( Config.max_thread_num, Config.max_thread_num );
+            m_threadFree = new SemaphoreSlim( Config.max_thread_num, Config.max_thread_num );
         }
 
         public static void fetch()
@@ -43,7 +43,7 @@ namespace async_spy
 
                     WebClient client = new WebClient();
 
-                    m_threadFree.WaitOne();
+                    m_threadFree.Wait();
                     Console.WriteLine("Downloading " + Config.url_base + currRemoteXLS + " to " + Config.local_xls_base + currXLS);
                     client.DownloadFileTaskAsync(Config.url_base + currRemoteXLS, Config.local_xls_base + currXLS).ContinueWith( (prevTask) => 
                     {
